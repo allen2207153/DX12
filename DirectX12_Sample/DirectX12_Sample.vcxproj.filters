@@ -28,9 +28,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="BasicShaderHeader.hlsli">
-      <Filter>資源檔</Filter>
-    </None>
     <None Include="BasicType.hlsli">
       <Filter>資源檔</Filter>
     </None>

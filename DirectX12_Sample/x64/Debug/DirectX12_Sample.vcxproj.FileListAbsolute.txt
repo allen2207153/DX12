@@ -1,3 +1,4 @@
 C:\Users\allen\OneDrive\桌面\DirectX12\Chapter3\DirectX12_Sample\x64\Debug\DirectX12_Sample.exe
 C:\Users\allen\OneDrive\桌面\DirectX12\DirectX12_Sample\x64\Debug\DirectX12_Sample.exe
 C:\Users\allen\OneDrive\桌面\DirectX12\DirectX12_SimplePratice\x64\Debug\DirectX12_Sample.exe
+C:\Users\allen\OneDrive\桌面\DirectX12\DX12\DirectX12_Sample\x64\Debug\DirectX12_Sample.exe
