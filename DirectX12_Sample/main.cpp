@@ -6,7 +6,7 @@
 #include<DirectXMath.h>
 #include<vector>
 #include<string>
-
+#include<DirectXTex.h>
 #include<d3dcompiler.h>
 #ifdef _DEBUG
 #include<iostream>
@@ -16,6 +16,7 @@
 #pragma comment(lib,"d3d12.lib")
 #pragma comment(lib,"dxgi.lib")
 #pragma comment(lib,"d3dcompiler.lib")
+#pragma comment(lib,"DirectXTex.lib")
 
 using namespace DirectX;
 
@@ -424,21 +425,31 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	scissorrect.right = scissorrect.left + window_width;//切り抜き右座標
 	scissorrect.bottom = scissorrect.top + window_height;//切り抜き下座標
 
+	//Load WIC texture
+	TexMetadata metadata = {};
+	ScratchImage scatchImg = {};
 
-	struct TexRGBA
-	{
-		unsigned char R, G, B, A;
-	};
-	
-	std::vector<TexRGBA> texturedata(256*256);
+	result = LoadFromWICFile(
+		L"img/zelda.png", WIC_FLAGS_NONE,
+		&metadata, scatchImg);
 
-	for (auto& rgba : texturedata)
-	{
-		rgba.R = rand() % 256;
-		rgba.G = rand() % 256;
-		rgba.B = rand() % 256;
-		rgba.A = 255;//α は1.0
-	}
+	auto img = scatchImg.GetImage(0, 0, 0);
+
+
+	//struct TexRGBA
+	//{
+	//	unsigned char R, G, B, A;
+	//};
+	//
+	//std::vector<TexRGBA> texturedata(256*256);
+
+	//for (auto& rgba : texturedata)
+	//{
+	//	rgba.R = rand() % 256;
+	//	rgba.G = rand() % 256;
+	//	rgba.B = rand() % 256;
+	//	rgba.A = 255;//α は1.0
+	//}
 
 	//WriteToSubresource,ヒープ設定
 	D3D12_HEAP_PROPERTIES texHeapProp{};
@@ -457,14 +468,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	texHeapProp.VisibleNodeMask = 0;
 	
 	D3D12_RESOURCE_DESC resDesc = {};
-	resDesc.Format =DXGI_FORMAT_R8G8B8A8_UNORM;//RGBAフォーマット
-	resDesc.Width = 256;//幅
-	resDesc.Height = 256;//高さ
-	resDesc.DepthOrArraySize = 1;//2Dで配列でもないので１
+	resDesc.Format =metadata.format;//RGBAフォーマット
+	resDesc.Width = metadata.width;//幅
+	resDesc.Height = metadata.height;//高さ
+	resDesc.DepthOrArraySize = metadata.arraySize;//2Dで配列でもないので１
 	resDesc.SampleDesc.Count = 1;//通常テクスチャなのでアンチェリしない
-	resDesc.SampleDesc.Quality = 0;//
-	resDesc.MipLevels =1;//ミップマップしないのでミップ数は１つ
-	resDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;//2Dテクスチャ用
+	resDesc.MipLevels =metadata.mipLevels;//ミップマップしないのでミップ数は１つ
+	resDesc.Dimension = static_cast<D3D12_RESOURCE_DIMENSION>(metadata.dimension);//2Dテクスチャ用
 	resDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;//レイアウトについては決定しない
 	resDesc.Flags = D3D12_RESOURCE_FLAG_NONE;//とくにフラグなし
 
@@ -481,9 +491,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	result = texbuff->WriteToSubresource(
 		0,
 		nullptr,//全領域へコピー
-		texturedata.data(),//元データアドレス
-		sizeof(TexRGBA) *256,//1ラインサイズ
-		sizeof(TexRGBA) * texturedata.size()//全サイズ
+		img->pixels,//元データアドレス
+		img->rowPitch,//one line size
+		img->slicePitch//one size
 	);
 
 	ID3D12DescriptorHeap* texDescHeap = nullptr;
@@ -500,7 +510,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	result = _dev->CreateDescriptorHeap(&descHeapDesc, IID_PPV_ARGS(&texDescHeap));
 
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-	srvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;//RGBA(0.0f～1.0fに正規化)
+	srvDesc.Format = metadata.format;//RGBA(0.0f～1.0fに正規化)
 	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;//後述
 	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;//2Dテクスチャ
 	srvDesc.Texture2D.MipLevels = 1;//ミップマップは使用しないので1

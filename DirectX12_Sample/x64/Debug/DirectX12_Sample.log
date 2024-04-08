@@ -1,2 +1,7 @@
-﻿  compilation object save succeeded; see C:\Users\allen\OneDrive\桌面\DirectX12\DX12\DirectX12_Sample\x64\Debug\BasicPixelShader.cso
+﻿  main.cpp
+C:\Users\allen\OneDrive\桌面\DirectX12\DX12\DirectX12_Sample\main.cpp(473,27): warning C4267: '=': 將 'size_t' 轉換為 'UINT'，資料可能遺失
+C:\Users\allen\OneDrive\桌面\DirectX12\DX12\DirectX12_Sample\main.cpp(474,37): warning C4267: '=': 將 'size_t' 轉換為 'UINT16'，資料可能遺失
+C:\Users\allen\OneDrive\桌面\DirectX12\DX12\DirectX12_Sample\main.cpp(476,29): warning C4267: '=': 將 'size_t' 轉換為 'UINT16'，資料可能遺失
+C:\Users\allen\OneDrive\桌面\DirectX12\DX12\DirectX12_Sample\main.cpp(496,6): warning C4267: '引數': 將 'size_t' 轉換為 'UINT'，資料可能遺失
+C:\Users\allen\OneDrive\桌面\DirectX12\DX12\DirectX12_Sample\main.cpp(495,6): warning C4267: '引數': 將 'size_t' 轉換為 'UINT'，資料可能遺失
   DirectX12_Sample.vcxproj -> C:\Users\allen\OneDrive\桌面\DirectX12\DX12\DirectX12_Sample\x64\Debug\DirectX12_Sample.exe
